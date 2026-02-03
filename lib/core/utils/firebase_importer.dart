@@ -95,30 +95,7 @@ class FirebaseImporter {
           // Resolve Media URL from Firebase Storage if filename exists
           String? mediaUrl;
           if (mediaFilename != null) {
-            try {
-              String bucketPath;
-              if (type == QuestionType.image) {
-                bucketPath = 'foto_questions/$mediaFilename';
-              } else if (type == QuestionType.audio ||
-                  type == QuestionType.audioDouble) {
-                bucketPath = 'audio_questions/$mediaFilename';
-              } else {
-                bucketPath = 'other/$mediaFilename'; // Fallback
-              }
-
-              debugPrint('🔍 resolving URL for: $bucketPath');
-              mediaUrl = await FirebaseStorage.instance
-                  .ref(bucketPath)
-                  .getDownloadURL();
-              debugPrint('✅ Resolved: $mediaUrl');
-            } catch (e) {
-              debugPrint('⚠️ Could not resolve URL for $mediaFilename: $e');
-              // Fallback: keep filename or set to null?
-              // Let's keep the filename so we know what was intended,
-              // but the UI checks for full URL usually.
-              // Maybe valid for caching if we implemented that.
-              mediaUrl = mediaFilename;
-            }
+            mediaUrl = await _resolveStorageUrl(mediaFilename, type);
           }
 
           // ID & Order Logic
@@ -181,6 +158,43 @@ class FirebaseImporter {
                   SubQuestion.fromMap(parsed as Map<String, dynamic>),
                 ];
               }
+            }
+          }
+
+          // Resolve IDs/filenames in SubQuestion options if they refer to images
+          for (int sIdx = 0; sIdx < subQuestions.length; sIdx++) {
+            final subQ = subQuestions[sIdx];
+            List<String> updatedOptions = [];
+            bool changed = false;
+
+            for (var opt in subQ.options) {
+              final lower = opt.toLowerCase();
+              if (lower.contains('png') ||
+                  lower.contains('jpg') ||
+                  lower.contains('jpeg') ||
+                  lower.contains('webp')) {
+                final resolved = await _resolveStorageUrl(
+                  opt,
+                  QuestionType.image,
+                );
+                if (resolved != opt) {
+                  updatedOptions.add(resolved);
+                  changed = true;
+                } else {
+                  updatedOptions.add(opt);
+                }
+              } else {
+                updatedOptions.add(opt);
+              }
+            }
+
+            if (changed) {
+              subQuestions[sIdx] = SubQuestion(
+                text: subQ.text,
+                options: updatedOptions,
+                correctOptionIndex: subQ.correctOptionIndex,
+                correctTextAnswer: subQ.correctTextAnswer,
+              );
             }
           }
 
@@ -267,6 +281,38 @@ class FirebaseImporter {
       debugPrint("🚨 JSON Parse Error [$contextInfo]: $e");
       debugPrint("   Questionable Content: $jsonStr");
       return null;
+    }
+  }
+
+  Future<String> _resolveStorageUrl(String filename, QuestionType type) async {
+    if (filename.startsWith('http')) return filename;
+
+    try {
+      String bucketPath;
+      final lower = filename.toLowerCase();
+      if (lower.contains('mp3') ||
+          lower.contains('wav') ||
+          lower.contains('m4a')) {
+        bucketPath = 'audio_questions/$filename';
+      } else if (lower.contains('png') ||
+          lower.contains('jpg') ||
+          lower.contains('jpeg') ||
+          lower.contains('webp')) {
+        bucketPath = 'foto_questions/$filename';
+      } else if (type == QuestionType.image) {
+        bucketPath = 'foto_questions/$filename';
+      } else if (type == QuestionType.audio ||
+          type == QuestionType.audioDouble) {
+        bucketPath = 'audio_questions/$filename';
+      } else {
+        bucketPath = 'other/$filename';
+      }
+
+      debugPrint('🔍 resolving URL for: $bucketPath');
+      return await FirebaseStorage.instance.ref(bucketPath).getDownloadURL();
+    } catch (e) {
+      debugPrint('⚠️ Could not resolve URL for $filename: $e');
+      return filename;
     }
   }
 }

@@ -64,24 +64,9 @@ class QuestionWidget extends StatelessWidget {
               ),
             ),
 
-          // Audio Player (for audio/audioDouble)
-          if ((question.type == QuestionType.audio ||
-                  question.type == QuestionType.audioDouble) &&
-              question.mediaUrl != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: FirebaseAudioWidget(pathOrUrl: question.mediaUrl!),
-            ),
-
-          // Image Display (for image type)
-          if (question.type == QuestionType.image && question.mediaUrl != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: FirebaseImageWidget(
-                pathOrUrl: question.mediaUrl!,
-                fit: BoxFit.contain, // Main image should ideally be contained
-              ),
-            ),
+          // Universal Media Display logic
+          if (question.mediaUrl != null)
+            _buildMedia(question.mediaUrl!, question.type),
 
           // Render all sub-questions
           // If it's a normal QuestionType.text, subQuestions has 1 item.
@@ -106,6 +91,38 @@ class QuestionWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildMedia(String url, QuestionType type) {
+    bool isAudio =
+        type == QuestionType.audio ||
+        type == QuestionType.audioDouble ||
+        url.toLowerCase().contains('mp3') ||
+        url.toLowerCase().contains('wav') ||
+        url.toLowerCase().contains('m4a');
+
+    bool isImage =
+        type == QuestionType.image ||
+        url.toLowerCase().contains('png') ||
+        url.toLowerCase().contains('jpg') ||
+        url.toLowerCase().contains('jpeg') ||
+        url.toLowerCase().contains('webp');
+
+    if (isAudio) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: FirebaseAudioWidget(pathOrUrl: url),
+      );
+    }
+
+    if (isImage) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: FirebaseImageWidget(pathOrUrl: url, fit: BoxFit.contain),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }
 
@@ -650,6 +667,8 @@ class FirebaseImageWidget extends StatefulWidget {
   State<FirebaseImageWidget> createState() => _FirebaseImageWidgetState();
 }
 
+final Map<String, String> _mediaCache = {};
+
 class _FirebaseImageWidgetState extends State<FirebaseImageWidget> {
   late Future<String> _downloadUrlFuture;
 
@@ -661,17 +680,38 @@ class _FirebaseImageWidgetState extends State<FirebaseImageWidget> {
 
   Future<String> _resolveUrl() async {
     final path = widget.pathOrUrl;
-    if (path.startsWith('http') || path.startsWith('https')) {
+    if (path.startsWith('http')) {
       return path;
     }
-    // Try foto_questions first logic
+
+    if (_mediaCache.containsKey(path)) return _mediaCache[path]!;
+
     try {
-      return await FirebaseStorage.instance
-          .ref('foto_questions/$path')
+      String bucketPath;
+      final lower = path.toLowerCase();
+      if (lower.contains('png') ||
+          lower.contains('jpg') ||
+          lower.contains('jpeg') ||
+          lower.contains('webp')) {
+        bucketPath = 'foto_questions/$path';
+      } else {
+        bucketPath = path;
+      }
+
+      final url = await FirebaseStorage.instance
+          .ref(bucketPath)
           .getDownloadURL();
+      _mediaCache[path] = url;
+      return url;
     } catch (e) {
-      debugPrint("Could not find $path in foto_questions, trying root...");
-      return await FirebaseStorage.instance.ref(path).getDownloadURL();
+      try {
+        final url = await FirebaseStorage.instance.ref(path).getDownloadURL();
+        _mediaCache[path] = url;
+        return url;
+      } catch (e2) {
+        debugPrint("Image not found: $path");
+        rethrow;
+      }
     }
   }
 
@@ -689,20 +729,38 @@ class _FirebaseImageWidgetState extends State<FirebaseImageWidget> {
       future: _downloadUrlFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            height: 100,
-            child: Center(
+          return Container(
+            height: 200,
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Center(
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: Colors.white,
+                color: AppTheme.mondeluxPrimary,
               ),
             ),
           );
         }
         if (snapshot.hasError || !snapshot.hasData) {
-          return Text(
-            widget.pathOrUrl,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
+          return Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.red.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Column(
+              children: [
+                const Icon(Icons.broken_image, color: Colors.red),
+                const SizedBox(height: 8),
+                Text(
+                  "Image not found: ${widget.pathOrUrl}",
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           );
         }
         return ClipRRect(
@@ -717,7 +775,7 @@ class _FirebaseImageWidgetState extends State<FirebaseImageWidget> {
               child: Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: AppTheme.mondeluxPrimary,
                 ),
               ),
             ),
@@ -749,19 +807,44 @@ class _FirebaseAudioWidgetState extends State<FirebaseAudioWidget> {
 
   Future<String> _resolveUrl() async {
     final path = widget.pathOrUrl;
-    if (path.startsWith('http') || path.startsWith('https')) {
+    if (path.startsWith('http')) {
       return path;
     }
-    // Assume audio is in root or specific audio folder?
-    // Let's try root first as per existing logic convention or maybe 'audio_questions'?
-    // Previous code assumed direct URL. Let's try root.
+
+    // Check local static cache
+    if (_mediaCache.containsKey(path)) return _mediaCache[path]!;
+
     try {
-      return await FirebaseStorage.instance.ref(path).getDownloadURL();
-    } catch (e) {
-      // Try audio folder?
-      return await FirebaseStorage.instance
-          .ref('audio_questions/$path')
+      String bucketPath;
+      final lower = path.toLowerCase();
+      if (lower.contains('mp3') ||
+          lower.contains('wav') ||
+          lower.contains('m4a')) {
+        bucketPath = 'audio_questions/$path';
+      } else if (lower.contains('png') ||
+          lower.contains('jpg') ||
+          lower.contains('jpeg') ||
+          lower.contains('webp')) {
+        bucketPath = 'foto_questions/$path';
+      } else {
+        bucketPath = path; // Root
+      }
+
+      final url = await FirebaseStorage.instance
+          .ref(bucketPath)
           .getDownloadURL();
+      _mediaCache[path] = url;
+      return url;
+    } catch (e) {
+      // Fallback to searching root if folder attempt failed
+      try {
+        final url = await FirebaseStorage.instance.ref(path).getDownloadURL();
+        _mediaCache[path] = url;
+        return url;
+      } catch (e2) {
+        debugPrint("Could not find $path in storage");
+        rethrow;
+      }
     }
   }
 
@@ -770,8 +853,21 @@ class _FirebaseAudioWidgetState extends State<FirebaseAudioWidget> {
     return FutureBuilder<String>(
       future: _resolvedUrlFuture,
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const SizedBox.shrink(); // or loading
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const SizedBox(
+            height: 60,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          );
+        }
+        if (snapshot.hasError || !snapshot.hasData) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              "Audio not found: ${widget.pathOrUrl}",
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+          );
         }
         return _AudioPlayerWidget(url: snapshot.data!);
       },

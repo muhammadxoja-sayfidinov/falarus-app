@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pinput/pinput.dart';
 
 import 'package:falarus/core/design/app_theme.dart';
 import 'package:falarus/core/design/background_scaffold.dart';
@@ -12,6 +11,8 @@ import 'package:falarus/core/design/glass_container.dart';
 import 'package:falarus/core/utils/toast_utils.dart';
 import 'package:falarus/features/auth/presentation/auth_controller.dart';
 import 'package:falarus/l10n/generated/app_localizations.dart';
+import 'package:pinput/pinput.dart';
+import 'package:smart_auth/smart_auth.dart';
 
 class SmsVerificationScreen extends ConsumerStatefulWidget {
   const SmsVerificationScreen({super.key});
@@ -21,8 +22,80 @@ class SmsVerificationScreen extends ConsumerStatefulWidget {
       _SmsVerificationScreenState();
 }
 
+class SmartAuthSmsRetriever implements SmsRetriever {
+  final SmartAuth smartAuth;
+
+  SmartAuthSmsRetriever(this.smartAuth);
+
+  @override
+  Future<void> dispose() async {
+    // SmartAuth doesn't require direct dispose here
+  }
+
+  @override
+  Future<String?> getSmsCode() async {
+    try {
+      final res = await smartAuth.getSmsWithUserConsentApi();
+      if (res.hasData && res.requireData.code != null) {
+        return res.requireData.code;
+      }
+    } catch (e) {
+      debugPrint('SmartAuth Error: $e');
+    }
+    return null;
+  }
+
+  @override
+  bool get listenForMultipleSms => false;
+}
+
 class _SmsVerificationScreenState extends ConsumerState<SmsVerificationScreen> {
   final _codeController = TextEditingController();
+  late final SmartAuth _smartAuth;
+  late final SmartAuthSmsRetriever _smsRetriever;
+
+  @override
+  void initState() {
+    super.initState();
+    _smartAuth = SmartAuth.instance;
+    _smsRetriever = SmartAuthSmsRetriever(_smartAuth);
+  }
+
+  @override
+  void dispose() {
+    _codeController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleVerification(String code) async {
+    if (code.length != 6) return;
+
+    final success = await ref.read(authProvider.notifier).verifyCode(code);
+
+    if (success && mounted) {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final doc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        final hasName =
+            doc.exists &&
+            doc.data()!.containsKey('firstName') &&
+            doc.data()!['firstName'] != null &&
+            doc.data()!['firstName'].toString().isNotEmpty;
+
+        if (mounted) {
+          if (hasName) {
+            context.go('/loading');
+          } else {
+            context.go('/user-info');
+          }
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +121,14 @@ class _SmsVerificationScreenState extends ConsumerState<SmsVerificationScreen> {
     ref.listen(authProvider, (previous, next) {
       if (next.error != null && next.error != previous?.error) {
         ToastUtils.showError(context, next.error!);
+      }
+
+      // Auto-fill and auto-submit if credential arrives (Android Auto-resolution)
+      if (next.autoCredential != null && next.autoCredential!.smsCode != null) {
+        final code = next.autoCredential!.smsCode!;
+        _codeController.text = code;
+        // Trigger the button logic automatically
+        _handleVerification(code);
       }
     });
 
@@ -100,6 +181,7 @@ class _SmsVerificationScreenState extends ConsumerState<SmsVerificationScreen> {
                     Pinput(
                       length: 6,
                       controller: _codeController,
+                      smsRetriever: _smsRetriever,
                       defaultPinTheme: defaultPinTheme,
                       focusedPinTheme: defaultPinTheme.copyWith(
                         decoration: defaultPinTheme.decoration!.copyWith(
@@ -116,7 +198,7 @@ class _SmsVerificationScreenState extends ConsumerState<SmsVerificationScreen> {
                       pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
                       showCursor: true,
                       onCompleted: (pin) {
-                        // Optional: Auto-submit here
+                        _handleVerification(pin);
                       },
                     ),
                     const SizedBox(height: 32),
@@ -129,42 +211,7 @@ class _SmsVerificationScreenState extends ConsumerState<SmsVerificationScreen> {
                             ? null
                             : () async {
                                 final code = _codeController.text;
-                                if (code.length == 6) {
-                                  final success = await ref
-                                      .read(authProvider.notifier)
-                                      .verifyCode(code);
-
-                                  if (success && context.mounted) {
-                                    final user =
-                                        FirebaseAuth.instance.currentUser;
-                                    if (user != null) {
-                                      final doc = await FirebaseFirestore
-                                          .instance
-                                          .collection('users')
-                                          .doc(user.uid)
-                                          .get();
-
-                                      final hasName =
-                                          doc.exists &&
-                                          doc.data()!.containsKey(
-                                            'firstName',
-                                          ) &&
-                                          doc.data()!['firstName'] != null &&
-                                          doc
-                                              .data()!['firstName']
-                                              .toString()
-                                              .isNotEmpty;
-
-                                      if (context.mounted) {
-                                        if (hasName) {
-                                          context.go('/loading');
-                                        } else {
-                                          context.go('/user-info');
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
+                                await _handleVerification(code);
                               },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.mondeluxPrimary,

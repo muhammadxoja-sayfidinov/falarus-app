@@ -9,13 +9,15 @@ class AuthState {
   final AuthStatus status;
   final String? error;
   final String? phoneNumber;
-  final String? verificationId; // Needed for Firebase Phone Auth
+  final String? verificationId;
+  final PhoneAuthCredential? autoCredential;
 
   AuthState({
     this.status = AuthStatus.initial,
     this.error,
     this.phoneNumber,
     this.verificationId,
+    this.autoCredential,
   });
 
   AuthState copyWith({
@@ -23,12 +25,14 @@ class AuthState {
     String? error,
     String? phoneNumber,
     String? verificationId,
+    PhoneAuthCredential? autoCredential,
   }) {
     return AuthState(
       status: status ?? this.status,
       error: error ?? this.error,
       phoneNumber: phoneNumber ?? this.phoneNumber,
       verificationId: verificationId ?? this.verificationId,
+      autoCredential: autoCredential ?? this.autoCredential,
     );
   }
 }
@@ -61,6 +65,7 @@ class AuthController extends Notifier<AuthState> {
           state = state.copyWith(
             status: AuthStatus.authenticated,
             phoneNumber: phone,
+            autoCredential: credential,
           );
         },
         verificationFailed: (FirebaseAuthException e) {

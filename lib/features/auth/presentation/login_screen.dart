@@ -58,6 +58,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.status == AuthStatus.codeSent) {
         context.push('/verify');
+      } else if (next.status == AuthStatus.authenticated &&
+          next.autoCredential != null) {
+        // Auto-resolution happened on login screen
+        context.go('/loading');
       } else if (next.status == AuthStatus.error && next.error != null) {
         ScaffoldMessenger.of(
           context,
