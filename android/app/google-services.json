@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "699043853640",
+    "project_id": "flarus-app",
+    "storage_bucket": "flarus-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:699043853640:android:c768b9936d710166ce6f7d",
+        "android_client_info": {
+          "package_name": "com.flarus.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCViISlF2YfQKDcfJZnXLBtqYZShOiQerY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
