@@ -45,6 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -52,8 +56,10 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<!-- TODO: Quyidagi qatorni REVERSE_CLIENT_ID bilan almashtiring -->
-				<string>SIZNING_REVERSE_CLIENT_ID_INGIZ</string>
+				<!-- Firebase Phone Auth reCAPTCHA redirect scheme (encoded GOOGLE_APP_ID) -->
+				<string>app-1-699043853640-ios-4e7c363ebbb0b2e9ce6f7d</string>
+				<!-- Add bundle ID as well -->
+				<string>com.flarus.app</string>
 			</array>
 		</dict>
 	</array>

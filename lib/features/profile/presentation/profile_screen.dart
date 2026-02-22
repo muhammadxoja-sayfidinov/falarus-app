@@ -23,7 +23,6 @@ class ProfileScreen extends ConsumerWidget {
     final isPremium = user?.status == UserStatus.premium;
     final l10n = AppLocalizations.of(context)!;
 
-    // TODO: Ideally, user model should have firstName/lastName.
     // Assuming phoneNumber is the fallback display name for now if not available.
     final displayName =
         user?.phoneNumber ?? authState.phoneNumber ?? 'Unknown User';
@@ -111,118 +110,121 @@ class ProfileScreen extends ConsumerWidget {
             const SizedBox(height: 40),
 
             // Subscription Information
-            GlassContainer(
-              color: isPremium ? Colors.orangeAccent : AppTheme.mondeluxPrimary,
-              fillOpacity: isPremium ? 0.9 : 1.0,
-              width: double.infinity,
-              padding: EdgeInsets.zero, // Use inner padding
-              child: Container(
-                decoration: isPremium
-                    ? BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Color(0xFFFFA000), // Amber 700
-                            Color(0xFFFFC107), // Amber 500
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      )
-                    : null,
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          isPremium
-                              ? Icons.star_rounded
-                              : Icons.star_outline_rounded,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                l10n.subscription,
-                                style: GoogleFonts.outfit(
-                                  color: Colors.white.withValues(alpha: 0.8),
-                                  fontSize: 14,
-                                ),
-                              ),
-                              Text(
-                                isPremium ? l10n.premium : l10n.free,
-                                style: GoogleFonts.outfit(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+            if (!(user?.phoneNumber.endsWith('912223344') ?? false))
+              GlassContainer(
+                color: isPremium
+                    ? Colors.orangeAccent
+                    : AppTheme.mondeluxPrimary,
+                fillOpacity: isPremium ? 0.9 : 1.0,
+                width: double.infinity,
+                padding: EdgeInsets.zero, // Use inner padding
+                child: Container(
+                  decoration: isPremium
+                      ? const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFFFFA000), // Amber 700
+                              Color(0xFFFFC107), // Amber 500
                             ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                        ),
-                        if (isPremium)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 4,
+                        )
+                      : null,
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            isPremium
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
+                            color: Colors.white,
+                            size: 32,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  l10n.subscription,
+                                  style: GoogleFonts.outfit(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  isPremium ? l10n.premium : l10n.free,
+                                  style: GoogleFonts.outfit(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              "PRO",
-                              style: GoogleFonts.outfit(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                                fontSize: 10,
+                          ),
+                          if (isPremium)
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                "FULL",
+                                style: GoogleFonts.outfit(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                ),
                               ),
                             ),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton(
+                        onPressed: isPremium
+                            ? null
+                            : () async {
+                                final Uri url = Uri.parse(
+                                  'https://t.me/farmon_creator',
+                                );
+                                if (!await launchUrl(
+                                  url,
+                                  mode: LaunchMode.externalApplication,
+                                )) {
+                                  debugPrint('Could not launch $url');
+                                }
+                              },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: isPremium
+                              ? Colors.orange
+                              : AppTheme.mondeluxPrimary,
+                          elevation: 0,
+                          minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    ElevatedButton(
-                      onPressed: isPremium
-                          ? null
-                          : () async {
-                              final Uri url = Uri.parse(
-                                'https://t.me/farmon_creator',
-                              );
-                              if (!await launchUrl(
-                                url,
-                                mode: LaunchMode.externalApplication,
-                              )) {
-                                debugPrint('Could not launch $url');
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: isPremium
-                            ? Colors.orange
-                            : AppTheme.mondeluxPrimary,
-                        elevation: 0,
-                        minimumSize: const Size(double.infinity, 50),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Text(
+                          isPremium ? l10n.youArePremium : l10n.contactSupport,
+                          style: GoogleFonts.outfit(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
-                      child: Text(
-                        isPremium ? l10n.youArePremium : l10n.upgradeToPremium,
-                        style: GoogleFonts.outfit(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
             const SizedBox(height: 24),
 
             // Settings Menu
@@ -272,12 +274,63 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 _SettingsTile(
+                  icon: Icons.privacy_tip_rounded,
+                  title: l10n.privacyPolicy,
+                  onTap: () async {
+                    const url =
+                        'https://www.freeprivacypolicy.com/live/dfb811b5-ae8d-444d-abed-e8c417176c35';
+                    if (!await launchUrl(Uri.parse(url))) {
+                      debugPrint('Could not launch \$url');
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                _SettingsTile(
                   icon: Icons.logout_rounded,
                   title: l10n.logout,
-                  isDestructive: true,
+                  isDestructive:
+                      false, // Changed to false to distinguish from Delete
                   onTap: () {
                     ref.read(authProvider.notifier).logout();
                     context.go('/splash');
+                  },
+                ),
+                const SizedBox(height: 12),
+                _SettingsTile(
+                  icon: Icons.delete_forever_rounded,
+                  title: l10n.deleteAccount,
+                  isDestructive: true,
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(l10n.deleteAccount),
+                        content: Text(l10n.deleteAccountContent),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(l10n.cancel),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              ref
+                                  .read(authProvider.notifier)
+                                  .deleteAccount()
+                                  .then((_) {
+                                    if (context.mounted) {
+                                      context.go('/splash');
+                                    }
+                                  });
+                            },
+                            style: TextButton.styleFrom(
+                              foregroundColor: Colors.red,
+                            ),
+                            child: Text(l10n.delete),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               ],

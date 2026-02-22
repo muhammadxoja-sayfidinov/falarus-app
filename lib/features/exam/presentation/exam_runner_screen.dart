@@ -428,8 +428,9 @@ class _ExamRunnerScreenState extends ConsumerState<ExamRunnerScreen> {
                             // Cannot change if already checked
                             if (_checkedSubQuestions.contains(
                               _getKey(question.id, subIndex),
-                            ))
+                            )) {
                               return;
+                            }
 
                             setState(() {
                               _textAnswers[_getKey(question.id, subIndex)] =
@@ -472,8 +473,9 @@ class _ExamRunnerScreenState extends ConsumerState<ExamRunnerScreen> {
                         if (!areAllQuestionsAnswered) break;
                       }
 
-                      if (!areAllQuestionsAnswered)
+                      if (!areAllQuestionsAnswered) {
                         return const SizedBox.shrink();
+                      }
 
                       return Container(
                         decoration: BoxDecoration(

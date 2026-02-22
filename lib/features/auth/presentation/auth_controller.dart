@@ -118,6 +118,18 @@ class AuthController extends Notifier<AuthState> {
     await _repository.logout();
     state = AuthState();
   }
+
+  Future<void> deleteAccount() async {
+    // Set loading state if you want, or just wait
+    state = state.copyWith(status: AuthStatus.loading);
+    try {
+      await _repository.deleteAccount();
+      state = AuthState(); // Reset to initial state implies logged out
+    } catch (e) {
+      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+      rethrow; // Pass error up to UI
+    }
+  }
 }
 
 final authProvider = NotifierProvider<AuthController, AuthState>(

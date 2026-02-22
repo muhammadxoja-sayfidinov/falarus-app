@@ -237,19 +237,19 @@ abstract class AppLocalizations {
   /// No description provided for @subscription.
   ///
   /// In en, this message translates to:
-  /// **'Subscription'**
+  /// **'Status'**
   String get subscription;
 
   /// No description provided for @free.
   ///
   /// In en, this message translates to:
-  /// **'Free'**
+  /// **'Standard'**
   String get free;
 
   /// No description provided for @premium.
   ///
   /// In en, this message translates to:
-  /// **'Premium'**
+  /// **'Full Access'**
   String get premium;
 
   /// No description provided for @upgradeToPremium.
@@ -261,7 +261,7 @@ abstract class AppLocalizations {
   /// No description provided for @youArePremium.
   ///
   /// In en, this message translates to:
-  /// **'You are Premium'**
+  /// **'Full Access Active'**
   String get youArePremium;
 
   /// No description provided for @variant.
@@ -485,6 +485,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Get ready for your exams with our comprehensive tests.'**
   String get tip3Desc;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Support'**
+  String get contactSupport;
+
+  /// No description provided for @deleteAccountContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account? This action cannot be undone and all your data will be lost.'**
+  String get deleteAccountContent;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

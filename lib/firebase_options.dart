@@ -60,11 +60,12 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDp5Fuo-f3BdrhCpM60StDd15bzQuE4L7o',
-    appId: '1:699043853640:ios:6ee2dded2489e7d5ce6f7d',
+    appId: '1:699043853640:ios:4e7c363ebbb0b2e9ce6f7d',
     messagingSenderId: '699043853640',
     projectId: 'flarus-app',
+    authDomain: 'flarus-app.firebaseapp.com',
     storageBucket: 'flarus-app.firebasestorage.app',
-    iosBundleId: 'com.liquidexam.liquidExam',
+    iosBundleId: 'com.flarus.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(

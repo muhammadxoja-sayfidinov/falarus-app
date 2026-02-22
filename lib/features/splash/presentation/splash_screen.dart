@@ -20,7 +20,7 @@ class _SplashScreenState extends State<SplashScreen> {
     _navigateToNext();
   }
 
-  _navigateToNext() async {
+  Future<void> _navigateToNext() async {
     await Future.delayed(const Duration(seconds: 2));
     if (mounted) {
       if (FirebaseAuth.instance.currentUser != null) {

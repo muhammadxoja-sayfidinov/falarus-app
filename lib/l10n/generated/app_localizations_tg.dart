@@ -75,19 +75,19 @@ class AppLocalizationsTg extends AppLocalizations {
   String get logout => 'Баромадан';
 
   @override
-  String get subscription => 'Обуна';
+  String get subscription => 'Вазъият';
 
   @override
-  String get free => 'Ройгон';
+  String get free => 'Стандарт';
 
   @override
-  String get premium => 'Премиум';
+  String get premium => 'Дастрасии пурра';
 
   @override
   String get upgradeToPremium => 'Гузариш ба Премиум';
 
   @override
-  String get youArePremium => 'Шумо Премиум доред';
+  String get youArePremium => 'Дастрасии пурра фаъол';
 
   @override
   String get variant => 'Вариант';
@@ -210,4 +210,23 @@ class AppLocalizationsTg extends AppLocalizations {
 
   @override
   String get tip3Desc => 'Бо тестҳои ҳамаҷонибаи мо ба имтиҳонҳо омода шавед.';
+
+  @override
+  String get deleteAccount => 'Ҳисобро нест кунед';
+
+  @override
+  String get privacyPolicy => 'Сиёсати махфият';
+
+  @override
+  String get contactSupport => 'Хадамоти дастгирӣ';
+
+  @override
+  String get deleteAccountContent =>
+      'Оё шумо боварӣ доред, ки мехоҳед ҳисоби худро нест кунед? Ин амалро бекор кардан ғайриимкон аст ва ҳамаи маълумоти шумо нест карда мешавад.';
+
+  @override
+  String get cancel => 'Бекор кардан';
+
+  @override
+  String get delete => 'Нест кардан';
 }

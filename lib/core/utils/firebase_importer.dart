@@ -108,12 +108,13 @@ class FirebaseImporter {
           if (idParts.isNotEmpty) {
             String lastPart = idParts.last;
             if (type == QuestionType.audioDouble) {
-              if (lastPart == '12')
+              if (lastPart == '12') {
                 order = 1;
-              else if (lastPart == '34')
+              } else if (lastPart == '34') {
                 order = 3;
-              else
+              } else {
                 order = int.tryParse(lastPart) ?? 0;
+              }
               id = "${id}_audio";
             } else {
               order = int.tryParse(lastPart) ?? 0;

@@ -118,4 +118,26 @@ class FirebaseAuthRepository {
     }
     await _auth.signOut();
   }
+
+  Future<void> deleteAccount() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      // 1. Delete user data from Firestore
+      try {
+        await _firestore.collection('users').doc(user.uid).delete();
+      } catch (e) {
+        debugPrint("Error deleting user data from Firestore: $e");
+        rethrow;
+      }
+
+      // 2. Delete user from Firebase Auth (Re-authentication might be needed in real apps,
+      // but strictly speaking for basic compliance, this call is the trigger)
+      try {
+        await user.delete();
+      } catch (e) {
+        debugPrint("Error deleting user from Auth: $e");
+        rethrow;
+      }
+    }
+  }
 }

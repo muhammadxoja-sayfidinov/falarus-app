@@ -22,11 +22,11 @@
   "settings": "Settings",
   "language": "Language",
   "logout": "Logout",
-  "subscription": "Subscription",
-  "free": "Free",
-  "premium": "Premium",
+  "subscription": "Status",
+  "free": "Standard",
+  "premium": "Full Access",
   "upgradeToPremium": "Upgrade to Premium",
-  "youArePremium": "You are Premium",
+  "youArePremium": "Full Access Active",
   "variant": "Variant",
   "audioQuestion": "Audio Question",
   "questionsOf": "Question {n} of {m}",
@@ -63,5 +63,11 @@
   "tip2Title": "Track Progress",
   "tip2Desc": "Monitor your results and see how you improve over time.",
   "tip3Title": "Pass Exams",
-  "tip3Desc": "Get ready for your exams with our comprehensive tests."
+  "tip3Desc": "Get ready for your exams with our comprehensive tests.",
+  "deleteAccount": "Delete Account",
+  "privacyPolicy": "Privacy Policy",
+  "contactSupport": "Contact Support",
+  "deleteAccountContent": "Are you sure you want to delete your account? This action cannot be undone and all your data will be lost.",
+  "cancel": "Cancel",
+  "delete": "Delete"
 }

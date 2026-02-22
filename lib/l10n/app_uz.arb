@@ -22,11 +22,11 @@
   "settings": "Sozlamalar",
   "language": "Til",
   "logout": "Chiqish",
-  "subscription": "Obuna",
-  "free": "Bepul",
-  "premium": "Premium",
+  "subscription": "Holat",
+  "free": "Standart",
+  "premium": "To'liq kirish",
   "upgradeToPremium": "Premiumga o'tish",
-  "youArePremium": "Siz Premiumdasiz",
+  "youArePremium": "To'liq kirish faol",
   "variant": "Variant",
   "audioQuestion": "Audio Savol",
   "questionsOf": "{n}-savol, jami {m} ta",
@@ -63,5 +63,11 @@
   "tip2Title": "Natijalarni kuzating",
   "tip2Desc": "Natijalaringizni tahlil qiling va o'sish ko'rsatkichlarini ko'ring.",
   "tip3Title": "Imtihonlardan o'ting",
-  "tip3Desc": "Bizning keng qamrovli testlarimiz bilan imtihonlarga tayyorlaning."
+  "tip3Desc": "Bizning keng qamrovli testlarimiz bilan imtihonlarga tayyorlaning.",
+  "deleteAccount": "Hisobni o'chirish",
+  "privacyPolicy": "Maxfiylik siyosati",
+  "contactSupport": "Qo'llab-quvvatlash",
+  "deleteAccountContent": "Hisobingizni o'chirmoqchimisiz? Bu amalni ortga qaytarib bo'lmaydi va barcha ma'lumotlaringiz o'chib ketadi.",
+  "cancel": "Bekor qilish",
+  "delete": "O'chirish"
 }

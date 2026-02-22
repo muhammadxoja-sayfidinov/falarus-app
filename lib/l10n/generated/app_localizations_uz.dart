@@ -75,19 +75,19 @@ class AppLocalizationsUz extends AppLocalizations {
   String get logout => 'Chiqish';
 
   @override
-  String get subscription => 'Obuna';
+  String get subscription => 'Holat';
 
   @override
-  String get free => 'Bepul';
+  String get free => 'Standart';
 
   @override
-  String get premium => 'Premium';
+  String get premium => 'To\'liq kirish';
 
   @override
   String get upgradeToPremium => 'Premiumga o\'tish';
 
   @override
-  String get youArePremium => 'Siz Premiumdasiz';
+  String get youArePremium => 'To\'liq kirish faol';
 
   @override
   String get variant => 'Variant';
@@ -211,4 +211,23 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get tip3Desc =>
       'Bizning keng qamrovli testlarimiz bilan imtihonlarga tayyorlaning.';
+
+  @override
+  String get deleteAccount => 'Hisobni o\'chirish';
+
+  @override
+  String get privacyPolicy => 'Maxfiylik siyosati';
+
+  @override
+  String get contactSupport => 'Qo\'llab-quvvatlash';
+
+  @override
+  String get deleteAccountContent =>
+      'Hisobingizni o\'chirmoqchimisiz? Bu amalni ortga qaytarib bo\'lmaydi va barcha ma\'lumotlaringiz o\'chib ketadi.';
+
+  @override
+  String get cancel => 'Bekor qilish';
+
+  @override
+  String get delete => 'O\'chirish';
 }

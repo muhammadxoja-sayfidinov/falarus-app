@@ -75,19 +75,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
-  String get subscription => 'Subscription';
+  String get subscription => 'Status';
 
   @override
-  String get free => 'Free';
+  String get free => 'Standard';
 
   @override
-  String get premium => 'Premium';
+  String get premium => 'Full Access';
 
   @override
   String get upgradeToPremium => 'Upgrade to Premium';
 
   @override
-  String get youArePremium => 'You are Premium';
+  String get youArePremium => 'Full Access Active';
 
   @override
   String get variant => 'Variant';
@@ -211,4 +211,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tip3Desc =>
       'Get ready for your exams with our comprehensive tests.';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get contactSupport => 'Contact Support';
+
+  @override
+  String get deleteAccountContent =>
+      'Are you sure you want to delete your account? This action cannot be undone and all your data will be lost.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
 }

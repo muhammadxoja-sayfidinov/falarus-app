@@ -8,7 +8,6 @@ import '../../../../core/design/background_scaffold.dart';
 
 import '../data/course_model.dart';
 import '../data/course_providers.dart';
-import '../../../../core/utils/firebase_importer.dart';
 
 class CoursesListScreen extends ConsumerWidget {
   const CoursesListScreen({super.key});
@@ -33,14 +32,6 @@ class CoursesListScreen extends ConsumerWidget {
               ),
             ),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.upload_file),
-                onPressed: () async {
-                  debugPrint("Triggering CSV Import...");
-                  await FirebaseImporter().uploadCsvToFirestore();
-                  debugPrint("Import Done.");
-                },
-              ),
               IconButton(
                 icon: const Icon(Icons.person_outline),
                 onPressed: () => context.push('/profile'),

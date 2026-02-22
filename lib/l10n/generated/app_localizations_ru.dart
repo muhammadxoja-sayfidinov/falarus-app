@@ -75,19 +75,19 @@ class AppLocalizationsRu extends AppLocalizations {
   String get logout => 'Выйти';
 
   @override
-  String get subscription => 'Подписка';
+  String get subscription => 'Статус';
 
   @override
-  String get free => 'Бесплатно';
+  String get free => 'Стандарт';
 
   @override
-  String get premium => 'Премиум';
+  String get premium => 'Полный доступ';
 
   @override
   String get upgradeToPremium => 'Перейти на Премиум';
 
   @override
-  String get youArePremium => 'У вас Премиум';
+  String get youArePremium => 'Полный доступ активен';
 
   @override
   String get variant => 'Вариант';
@@ -211,4 +211,23 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get tip3Desc =>
       'Подготовьтесь к экзаменам с помощью наших комплексных тестов.';
+
+  @override
+  String get deleteAccount => 'Удалить аккаунт';
+
+  @override
+  String get privacyPolicy => 'Политика конфиденциальности';
+
+  @override
+  String get contactSupport => 'Служба поддержки';
+
+  @override
+  String get deleteAccountContent =>
+      'Вы уверены, что хотите удалить свой аккаунт? Это действие нельзя отменить, и все ваши данные будут потеряны.';
+
+  @override
+  String get cancel => 'Отмена';
+
+  @override
+  String get delete => 'Удалить';
 }
